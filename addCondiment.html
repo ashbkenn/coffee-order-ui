@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Coffee Shop</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const beverageType = urlParams.get('type');
+    console.log('Selected Beverage Type:', beverageType);
+</script>
+<div class="header">
+    <a class="header-left" href="selectBeverage.html">Coffee Order System</a>
+    <div class="header-right">
+        <a href="orderStatus.html">Order Status</a>
+    </div>
+</div>
+<div class="centerScreenDivided">
+    <div class="centerLeft">
+        <div class="selectCondiments">Add the Condiments</div>
+        <div class="condimentButtons">
+            <button class="condimentButton" onclick="addCondiment('Milk')">Milk</button>
+            <button class="condimentButton" onclick="addCondiment('Mocha')">Mocha</button>
+            <button class="condimentButton" onclick="addCondiment('Soy')">Soy</button>
+            <button class="condimentButton" onclick="addCondiment('Whip')">Whip</button>
+        </div>
+    </div>
+    <div class="centerRight">
+        <div class="orderStatus">
+            <div id="myOrder">
+                <div class="orderTitle">My Order</div>
+                <div id="selectedBeverage" class="selBev">Selected Beverage: <span id="beverageName"></span></div>
+                <div id="condimentsList" class="orderItem"></div>
+                <button class="confirmOrderButton" onclick="confirmOrder()">Confirm Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const selectedBeverageEl = document.getElementById('beverageName');
+    const condimentsListEl = document.getElementById('condimentsList');
+    const condiments = [];
+
+    selectedBeverageEl.textContent = beverageType;
+
+    function addCondiment(condimentName) {
+        if (condiments.length < 4 && !condiments.includes(condimentName)) {
+            condiments.push(condimentName);
+            updateCondimentsList();
+        }
+    }
+
+    function removeCondiment(index) {
+        condiments.splice(index, 1);
+        updateCondimentsList();
+    }
+
+    function updateCondimentsList() {
+        condimentsListEl.innerHTML = "";
+        condiments.forEach((condiment, index) => {
+            const condimentItem = document.createElement('div');
+            condimentItem.className = 'condimentItem';
+            condimentItem.textContent = condiment;
+            condimentItem.onclick = () => removeCondiment(index);
+            condimentsListEl.appendChild(condimentItem);
+        });
+    }
+
+    function confirmOrder() {
+        const orderId = Math.floor(Math.random() * 1000);
+        const total = '4.5'; // Placeholder for the total cost
+        const details = encodeURIComponent(beverageType + ' with ' + condiments.join(', '));
+        window.location.href = `orderStatus.html?orderId=${orderId}&details=${details}&total=${total}`;
+    }
+</script>
+</body>
+</html>
