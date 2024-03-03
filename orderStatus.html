@@ -14,20 +14,20 @@
 </div>
 <div class="orderConfirmation">
     <h1>Order Placed:</h1>
-    <p>Order id: <span id="orderId">24</span></p>
-    <p><span id="orderDetails">Dark roast with milk and double mocha!</span></p>
-    <p>Total: <span id="orderTotal">$4.5</span></p>
+    <p>Order id: <span id="orderId"></span></p>
+    <p><span id="orderDetails"></span></p>
+    <p>Total: <span id="orderTotal"></span></p>
 </div>
 <script>
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
-        const orderId = urlParams.get('orderId');
-        const details = urlParams.get('details');
-        const total = urlParams.get('total');
+        const orderId = urlParams.get('orderId') || 'N/A';
+        const details = decodeURIComponent(urlParams.get('details')) || 'N/A';
+        const total = '$' + (urlParams.get('total') || 'N/A');
 
         document.getElementById('orderId').textContent = orderId;
-        document.getElementById('orderDetails').textContent = decodeURIComponent(details);
-        document.getElementById('orderTotal').textContent = `$${total}`;
+        document.getElementById('orderDetails').textContent = details;
+        document.getElementById('orderTotal').textContent = total;
     }
 </script>
 

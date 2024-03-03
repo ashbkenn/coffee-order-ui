@@ -46,16 +46,20 @@
 
     selectedBeverageEl.textContent = beverageType;
 
+    let host = "http://localhost:8080/"
     function addCondiment(condimentName) {
         if (condiments.length < 4 && !condiments.includes(condimentName)) {
             condiments.push(condimentName);
             updateCondimentsList();
+            console.log(`Added ${condimentName} to ${beverageType}.`);
         }
     }
+
 
     function removeCondiment(index) {
         condiments.splice(index, 1);
         updateCondimentsList();
+        console.log(`Removed a condiment.`);
     }
 
     function updateCondimentsList() {
@@ -70,11 +74,51 @@
     }
 
     function confirmOrder() {
-        const orderId = Math.floor(Math.random() * 1000);
-        const total = '4.5'; // Placeholder for the total cost
-        const details = encodeURIComponent(beverageType + ' with ' + condiments.join(', '));
-        window.location.href = `orderStatus.html?orderId=${orderId}&details=${details}&total=${total}`;
+        const backendUrl = 'https://coffee-order-latest-luvi.onrender.com';
+        const orderData = {
+            beverage: beverageType,
+            condiments: condiments
+        };
+
+        fetch(backendUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(orderData),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(receipt => {
+                console.log('Received Receipt:', receipt);
+
+                const orderId = receipt.id || 'N/A';
+                const details = encodeURIComponent(receipt.description || 'N/A');
+                const total = receipt.cost || 'N/A';
+
+                console.log('OrderId:', orderId);
+                console.log('Details:', details);
+                console.log('Total:', total);
+
+                // Check if values are valid before redirecting
+                if (orderId !== 'N/A' && details !== 'N/A' && total !== 'N/A') {
+                    window.location.href = `orderStatus.html?orderId=${orderId}&details=${details}&total=${total}`;
+                } else {
+                    console.error('Invalid values for redirect. Check server response and URL parameters.');
+                    // Handle error or provide fallback behavior
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting order:', error);
+                console.log('Error submitting order:', error.message);
+                // Handle error, show a message, or redirect to an error page if necessary
+            });
     }
+
 </script>
 </body>
 </html>
